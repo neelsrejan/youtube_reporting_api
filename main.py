@@ -13,7 +13,7 @@ def main():
 
     # Get all information to filter on 
     API_KEY = input("Please enter your API KEY: ").strip()
-    channel_id = "UCWPXl--e3JsJxRG64Of_msA" #input("Please enter your channel id: ").strip()
+    channel_id = input("Please enter your channel id: ").strip()
 
     YT = YT_REPORTING(API_KEY, channel_id)
     YT.get_channel_name()
