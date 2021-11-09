@@ -7,8 +7,9 @@ from create_jobs import Create_Jobs
 from check_jobs import Check_Jobs
 from get_reports import Get_Reports
 from download_reports import Download_Reports
+from delete_jobs import Delete_Jobs
 
-class YT_REPORTING(Report_Types, Create_Jobs, Check_Jobs, Get_Reports, Download_Reports):
+class YT_REPORTING(Report_Types, Create_Jobs, Check_Jobs, Get_Reports, Download_Reports, Delete_Jobs):
 
     def __init__(self, API_KEY, channel_id):
         self.API_KEY = API_KEY

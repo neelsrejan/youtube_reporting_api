@@ -8,3 +8,5 @@ To use the code, clone the repo, into the file of choice. Download and remane yo
 
 ## Warnings
 The program does not store your API KEY, nor does it see the contents of your secrets.json file. The program does add folders to your local system in which data gathered will be stored. If you wish to use the program, just know that it is up to you to ensure the main.py file is in a location you wish to run it.
+
+## Thank you for checking my project out!

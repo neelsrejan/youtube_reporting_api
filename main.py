@@ -20,16 +20,19 @@ def main():
 
     #Get list of all possible reports available
     YT.auth()
+    print("Getting list of all possible reports for channel")
     YT.get_report_types()
     
     #Check if all possible report types have jobs made for them
+    print("Checking if jobs have been created for possible reports")
     YT.check_jobs()
-    
+
+    print("Creating jobs if any exist that havent been made")
     to_create = []
     already_made = [report[1] for report in YT.queued_jobs]
     for i in range(len(YT.report_types_list)):
         if YT.report_types_list[i][0] not in already_made:
-            to_create.apend(YT.report_types_list[i])
+            to_create.append(YT.report_types_list[i])
         
     #Create all jobs
     YT.create_jobs(to_create)
@@ -46,6 +49,7 @@ def main():
         quit()
 
     else:
+        print("Getting and saving data")
         dates = os.listdir(os.path.join(os.getcwd(), f"{YT.channel_name}_data"))
         for day in dates:
             year, month, day = [int(i) for i in day.split("-")]
@@ -65,7 +69,6 @@ def main():
                 os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "clean", "csv", f"{category}"))
                 os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "clean", "excel", f"{category}"))
         data_for_dates = data_for_dates[:-1]
-        print(data_for_dates)
         for day in data_for_dates:
             for job in YT.queued_jobs:
                 if YT.num_requests / 29 < 1:
@@ -78,7 +81,13 @@ def main():
                     YT.num_requests += 1
                     YT.get_reports(job, day)
                     YT.download_reports(day, job)
-
-
+        print("Complete, all data has been gathered!")
+    
+    # Delete jobs works when queued jobs is not empty, if empty no jobs are deleted. Only uncomment if you want to delete jobs and remake jobs
+    """
+    YT.job_ids = [job_id[0] for job_id in YT.queued_jobs]
+    YT.delete_jobs()
+    YT.check_jobs()
+    """
 if __name__ == "__main__":
     main()

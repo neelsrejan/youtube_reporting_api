@@ -14,11 +14,11 @@ class Get_Reports(Auth):
         year, month, day = [int(i) for i in created_after[:10].split("-")]
         created_after = date(year, month, day)
         reports_per_day = []
-        for report in results["reports"]:
-            start_time = report["startTime"]
-            year, month, day = [int(i) for i in start_time[:10].split("-")]
-            start_time = date(year, month, day)
-            if created_after <= start_time and start_time < date_dir:
-                reports_per_day.append(report)
-        print(reports_per_day)
-        self.report_urls = [job_url["downloadUrl"] for job_url in reports_per_day]
+        if results:
+            for report in results["reports"]:
+                start_time = report["startTime"]
+                year, month, day = [int(i) for i in start_time[:10].split("-")]
+                start_time = date(year, month, day)
+                if created_after <= start_time and start_time < date_dir:
+                    reports_per_day.append(report)
+            self.report_urls = [job_url["downloadUrl"] for job_url in reports_per_day]
