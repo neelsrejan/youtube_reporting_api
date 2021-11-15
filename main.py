@@ -3,7 +3,7 @@ import shutil
 import time
 from datetime import date, timedelta
 from YT_REPORTING import YT_REPORTING
-from urllib.error import HTTPError
+from googleapiclient.errors import HttpError
 
 def main():
 
@@ -38,13 +38,13 @@ def main():
     YT.create_jobs(to_create)
 
     #Create directoies for data when ready
+    print("Creating data folder")
     if not os.path.exists(os.path.join(os.getcwd(), f"{YT.channel_name}_data")):
         YT.last_date = YT.date
         data_categories = [report[0] for report in YT.report_types_list]
         for category in data_categories:
-            os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{YT.date}", "raw", f"{category}"))
+            os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{YT.date}", "raw", "csv", f"{category}"))
             os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{YT.date}", "clean", "csv", f"{category}"))
-            os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{YT.date}", "clean", "excel", f"{category}"))
         print("Since this is your first time creating jobs for your channel, the program will end now, please rerun program in 2 days from not to ensure youtube has your data ready for you!")
         quit()
 
@@ -61,27 +61,29 @@ def main():
         data_categories = [report[0] for report in YT.report_types_list]
 
         data_for_dates = [str(YT.last_date)]
-        for i in range(1, delta.days + 1):
+        for i in range(1, delta.days-1):
             date_dir = str(YT.last_date + timedelta(days=i))
             data_for_dates.append(date_dir)
             for category in data_categories:
-                os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "raw", f"{category}"))
+                os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "raw", "csv", f"{category}"))
                 os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "clean", "csv", f"{category}"))
-                os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "clean", "excel", f"{category}"))
-        data_for_dates = data_for_dates[:-1]
-        for day in data_for_dates:
-            for job in YT.queued_jobs:
-                if YT.num_requests / 29 < 1:
-                    YT.num_requests += 1
-                    YT.get_reports(job, day)
-                    YT.download_reports(day, job)
-                else:
-                    time.sleep(60)
-                    YT.num_requests = 0
-                    YT.num_requests += 1
-                    YT.get_reports(job, day)
-                    YT.download_reports(day, job)
+        for day in data_for_dates[:-1]:
+            print(f"Getting data for {str(day)}") 
+            try:
+                for job in YT.queued_jobs:
+                    if YT.num_requests / 8 < 1:
+                        YT.num_requests += 1
+                        YT.get_reports(job, day)
+                        YT.download_reports(day, job)
+                    else:
+                        time.sleep(60)
+                        YT.num_requests = 0
+                        YT.get_reports(job, day)
+                        YT.download_reports(day, job)
+            except HttpError:
+                print(f"Program exceeded free quota usage per minute as its variable from google. Please remove folders that data has not been stored for and rerun the program.") 
         print("Complete, all data has been gathered!")
+
     
     # Delete jobs works when queued jobs is not empty, if empty no jobs are deleted. Only uncomment if you want to delete jobs and remake jobs
     """
