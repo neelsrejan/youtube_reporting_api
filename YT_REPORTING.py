@@ -8,8 +8,9 @@ from check_jobs import Check_Jobs
 from get_reports import Get_Reports
 from download_reports import Download_Reports
 from delete_jobs import Delete_Jobs
+from convert_csv_to_excel import Convert_Csv_To_Excel
 
-class YT_REPORTING(Report_Types, Create_Jobs, Check_Jobs, Get_Reports, Download_Reports, Delete_Jobs):
+class YT_REPORTING(Report_Types, Create_Jobs, Check_Jobs, Get_Reports, Download_Reports, Delete_Jobs, Convert_Csv_To_Excel):
 
     def __init__(self, API_KEY, channel_id):
         self.API_KEY = API_KEY

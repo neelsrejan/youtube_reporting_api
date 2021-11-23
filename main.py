@@ -43,8 +43,8 @@ def main():
         YT.last_date = YT.date
         data_categories = [report[0] for report in YT.report_types_list]
         for category in data_categories:
-            os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{YT.date}", "raw", "csv", f"{category}"))
-            os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{YT.date}", "clean", "csv", f"{category}"))
+            os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{YT.date}", "csv", f"{category}"))
+            os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{YT.date}", "excel", f"{category}"))
         print("Since this is your first time creating jobs for your channel, the program will end now, please rerun program in 2 days from not to ensure youtube has your data ready for you!")
         quit()
 
@@ -65,8 +65,8 @@ def main():
             date_dir = str(YT.last_date + timedelta(days=i))
             data_for_dates.append(date_dir)
             for category in data_categories:
-                os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "raw", "csv", f"{category}"))
-                os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "clean", "csv", f"{category}"))
+                os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "csv", f"{category}"))
+                os.makedirs(os.path.join(os.getcwd(), f"{YT.channel_name}_data", f"{date_dir}", "excel", f"{category}"))
         for day in data_for_dates[:-1]:
             print(f"Getting data for {str(day)}") 
             try:
@@ -75,11 +75,13 @@ def main():
                         YT.num_requests += 1
                         YT.get_reports(job, day)
                         YT.download_reports(day, job)
+                        YT.convert_csv_to_excel(day, job)
                     else:
                         time.sleep(60)
                         YT.num_requests = 0
                         YT.get_reports(job, day)
                         YT.download_reports(day, job)
+                        YT.convert_csv_to_excel(day, job)
             except HttpError:
                 print(f"Program exceeded free quota usage per minute as its variable from google. Please remove folders that data has not been stored for and rerun the program.") 
         print("Complete, all data has been gathered!")
